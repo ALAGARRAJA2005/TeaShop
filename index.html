@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="matcha">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZENITH — 3D Artisan Tea, Coffee & Culinary Hearth</title>
+  <meta name="description" content="An ultra-modern, interactive 3D sensory website celebrating the sacred craft of tea dropping, artisan coffee extraction, and freshly steamed rice feasts.">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍵</text></svg>">
+
+  <!-- Three.js & Controls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <!-- GSAP for Smooth Camera & Micro-Animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- ========================================================================
+       TOP NAVIGATION BAR
+       ======================================================================== -->
+  <header class="header">
+    <div class="brand-logo">
+      <div class="brand-emblem">A</div>
+      <span class="brand-name">Alagar • Zenith</span>
+    </div>
+
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#stage" class="nav-link active">3D Stage</a></li>
+        <li><a href="#craft-lab" class="nav-link">Craft Studio</a></li>
+        <li><a href="#menu" class="nav-link">Tasting Menu</a></li>
+        <li><a href="#philosophy" class="nav-link">Alchemy</a></li>
+        <li><a href="#alagar" class="nav-link">Master Alagar</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <!-- Direct Call to Master Alagar -->
+      <a href="tel:9600470133" class="sound-toggle-btn" style="color:#f4d06f;border-color:rgba(212,175,55,0.4);" title="Direct Call to Alagar">
+        <i data-lucide="phone" style="width:14px;height:14px;color:#d4af37;"></i>
+        <span style="font-weight:700;">9600470133</span>
+      </a>
+
+      <!-- Coffee Shop Music & Ambience Button -->
+      <button id="sound-btn" class="sound-toggle-btn" title="Coffee Shop Background Music" aria-label="Coffee Shop Music">
+        <i data-lucide="music" id="sound-icon" style="width:16px;height:16px;color:#d4af37;"></i>
+        <span id="sound-text">Cafe Music Off</span>
+        <div class="sound-bars" id="sound-bars">
+          <div class="sound-bar"></div>
+          <div class="sound-bar"></div>
+          <div class="sound-bar"></div>
+          <div class="sound-bar"></div>
+        </div>
+      </button>
+
+      <!-- Coffee Shop Ambience Mixer Trigger -->
+      <button id="mixer-btn" class="theme-picker-btn" title="Cafe Soundscape Mixer" aria-label="Cafe Sound Mixer">
+        <i data-lucide="sliders" style="width:18px;height:18px;"></i>
+      </button>
+
+      <!-- Soundscape Mixer Modal -->
+      <div class="sound-mixer-modal glass-panel" id="sound-mixer-modal">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <span style="font-family:var(--font-display);font-weight:700;font-size:0.92rem;color:#d4af37;">☕ Cafe Ambience</span>
+          <span style="font-size:0.72rem;color:var(--text-muted);">Procedural Web Audio</span>
+        </div>
+        
+        <div class="mixer-slider-item">
+          <div class="mixer-slider-label"><span>Lo-Fi Jazz Piano</span><span id="lofi-vol-text">70%</span></div>
+          <input type="range" min="0" max="100" value="70" class="craft-range-slider" id="lofi-vol-slider">
+        </div>
+
+        <div class="mixer-slider-item">
+          <div class="mixer-slider-label"><span>Vinyl Warmth & Hiss</span><span id="vinyl-vol-text">50%</span></div>
+          <input type="range" min="0" max="100" value="50" class="craft-range-slider" id="vinyl-vol-slider">
+        </div>
+
+        <div class="mixer-slider-item">
+          <div class="mixer-slider-label"><span>Barista Cup Clinks</span><span id="barista-vol-text">60%</span></div>
+          <input type="range" min="0" max="100" value="60" class="craft-range-slider" id="barista-vol-slider">
+        </div>
+      </div>
+
+      <!-- Theme Switcher Palette Trigger -->
+      <button id="theme-btn" class="theme-picker-btn" title="Change Atmosphere & Colors" aria-label="Change Theme">
+        <i data-lucide="palette" style="width:18px;height:18px;"></i>
+      </button>
+
+      <!-- Theme Dropdown Modal -->
+      <div class="theme-palette-modal glass-panel" id="theme-modal">
+        <button class="theme-opt-btn active" data-set-theme="matcha">
+          <span class="theme-dot" style="background:#7ca982;"></span> Zen Matcha
+        </button>
+        <button class="theme-opt-btn" data-set-theme="amber">
+          <span class="theme-dot" style="background:#d49b56;"></span> Amber Roast
+        </button>
+        <button class="theme-opt-btn" data-set-theme="midnight">
+          <span class="theme-dot" style="background:#4895ef;"></span> Midnight Hearth
+        </button>
+        <button class="theme-opt-btn" data-set-theme="sakura">
+          <span class="theme-dot" style="background:#f28482;"></span> Sakura Dusk
+        </button>
+      </div>
+
+      <!-- Tasting Flight / Cart Button -->
+      <button id="cart-toggle-btn" class="sound-toggle-btn" title="Tasting Tray">
+        <i data-lucide="cup-soda" style="width:16px;height:16px;"></i>
+        <span>Tray (<span id="cart-count">0</span>)</span>
+      </button>
+
+      <!-- Reserve Button -->
+      <button id="reserve-btn" class="btn-reserve">
+        <span>Reserve</span>
+        <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       LIVE INTERACTIVE ATELIER STATUS TICKER (ANIMATED UI)
+       ======================================================================== -->
+  <div class="live-atelier-ticker">
+    <div class="ticker-track">
+      <span class="ticker-pill">🔴 ATELIER LIVE</span>
+      <span class="ticker-text" id="live-ticker-text">Master Alagar is currently brewing South Indian Degree Filter Coffee at the counter • Freshly Steamed Ghee Podi Basmati Rice is Ready • Call +91 9600470133</span>
+      <span class="ticker-pill">✨ FRESH BATCH</span>
+      <span class="ticker-text">Royal Kashmiri Kahwa & Single-Estate Matcha now pouring • Reserve your table today</span>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       CELEBRATION BANNER FOR "RICE & TEA READY!"
+       ======================================================================== -->
+  <div id="feast-banner" class="feast-ready-banner">
+    ✨ ITADAKIMASU! Rice & Ceremonial Tea Are Ready!
+  </div>
+
+  <!-- ========================================================================
+       HERO & 3D INTERACTIVE STAGE
+       ======================================================================== -->
+  <section class="hero-stage-section" id="stage">
+    <!-- WebGL Canvas Container -->
+    <div id="three-canvas-container"></div>
+
+    <!-- Vignette / Lighting Gradient -->
+    <div class="stage-vignette"></div>
+
+    <!-- HUD Overlay -->
+    <div class="stage-hud-overlay">
+      <!-- Top Row: Hero Text & Live Telemetry -->
+      <div class="hud-top-row">
+        <div class="hero-title-wrap">
+          <div class="hero-tag">
+            <i data-lucide="sparkles" style="width:14px;height:14px;"></i>
+            <span>Sensory WebGL Experience</span>
+          </div>
+          <h1 class="hero-title" id="scene-hero-title">The Perfect<br>Tea Drop</h1>
+          <p class="hero-subtitle" id="scene-hero-desc">
+            Witness fluid physics in high fidelity. Golden droplets cascade into ceramic celadon, forming hypnotic concentric ripples and aromatic steam.
+          </p>
+          <div class="hero-cta-btns">
+            <button class="btn-primary" id="hero-primary-action">
+              <span id="hero-action-text">Drop Tea Bead</span>
+            </button>
+            <a href="#craft-lab" class="btn-glass">
+              <span>Open Brew Studio</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Live Telemetry Card -->
+        <div class="hud-telemetry-card glass-panel">
+          <div class="telemetry-header">
+            <span>Sensory Telemetry</span>
+            <div class="telemetry-pulse"></div>
+          </div>
+          <div class="telemetry-row">
+            <span class="telemetry-label">Water Temp</span>
+            <span class="telemetry-val" id="telemetry-temp">88°C</span>
+          </div>
+          <div class="telemetry-progress-bar">
+            <div class="telemetry-progress-fill" id="telemetry-temp-bar" style="width: 82%;"></div>
+          </div>
+          <div class="telemetry-row">
+            <span class="telemetry-label">Extraction</span>
+            <span class="telemetry-val" id="telemetry-extract">94.2%</span>
+          </div>
+          <div class="telemetry-row">
+            <span class="telemetry-label">Steam Index</span>
+            <span class="telemetry-val" id="telemetry-steam">Optimal</span>
+          </div>
+          <div class="telemetry-row">
+            <span class="telemetry-label">Brew Timer</span>
+            <span class="telemetry-val" id="telemetry-timer">00:45</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Row: Scene Switcher Pills & Action Controls -->
+      <div class="hud-bottom-row">
+        <div class="scene-switcher-pills">
+          <button class="scene-pill-btn active" data-scene="tea">
+            <i data-lucide="leaf" style="width:16px;height:16px;"></i>
+            <span>01. Tea Dropping</span>
+          </button>
+          <button class="scene-pill-btn" data-scene="coffee">
+            <i data-lucide="coffee" style="width:16px;height:16px;"></i>
+            <span>02. Artisan Coffee</span>
+          </button>
+          <button class="scene-pill-btn" data-scene="rice">
+            <i data-lucide="utensils" style="width:16px;height:16px;"></i>
+            <span>03. Rice & Tea Ready</span>
+          </button>
+        </div>
+
+        <!-- 3D Action Controls Bar -->
+        <div class="action-controls-bar">
+          <button class="action-btn active" id="action-trigger-btn">
+            <i data-lucide="play" style="width:14px;height:14px;"></i>
+            <span id="action-btn-label">Trigger Drop</span>
+          </button>
+
+          <button class="action-btn" id="action-pour-btn">
+            <i data-lucide="droplets" style="width:14px;height:14px;"></i>
+            <span id="pour-btn-label">Continuous Stream</span>
+          </button>
+
+          <!-- Camera Views -->
+          <div class="camera-presets-group">
+            <button class="cam-btn active" data-camera="cinematic" title="Cinematic Angle">🎬</button>
+            <button class="cam-btn" data-camera="pour" title="Focus Spout">🔍</button>
+            <button class="cam-btn" data-camera="top" title="Top-Down Flatlay">📐</button>
+            <button class="cam-btn" data-camera="macro" title="Macro Detail">✨</button>
+          </div>
+
+          <!-- 3D Lighting Mood Presets -->
+          <div class="lighting-mood-bar">
+            <button class="mood-btn active" data-lighting="golden" title="Golden Hour Warmth">🌟 Golden</button>
+            <button class="mood-btn" data-lighting="candle" title="Flickering Candle Hearth">🕯️ Candle</button>
+            <button class="mood-btn" data-lighting="moonlight" title="Indigo Moonlight">🌙 Moon</button>
+            <button class="mood-btn" data-lighting="neon" title="Cyber Tokyo Neon">🌸 Neon</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SECTION 1: THE CRAFT & BREW LAB
+       ======================================================================== -->
+  <section class="section" id="craft-lab">
+    <div class="section-head">
+      <span class="section-tag">Interactive Workshop</span>
+      <h2 class="section-title">The Brew & Hearth Studio</h2>
+      <p class="section-desc">
+        Calibrate your custom elixir or hearth dish. Adjust real-time extraction parameters and observe the 3D physics engine react instantly.
+      </p>
+    </div>
+
+    <div class="craft-lab-grid">
+      <!-- Interactive Tuning Controls -->
+      <div class="craft-controls-panel glass-panel">
+        <div class="craft-mode-tabs">
+          <button class="craft-tab-btn active" data-craft-mode="tea">Tea Infusion</button>
+          <button class="craft-tab-btn" data-craft-mode="coffee">Coffee Extraction</button>
+          <button class="craft-tab-btn" data-craft-mode="rice">Hearth Rice</button>
+        </div>
+
+        <!-- Slider 1: Temperature -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <span>Water Temperature</span>
+            <span class="slider-val" id="slider-temp-val">88°C</span>
+          </div>
+          <input type="range" min="70" max="98" value="88" class="craft-range-slider" id="slider-temp">
+        </div>
+
+        <!-- Slider 2: Brew Duration -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <span>Steep / Extraction Time</span>
+            <span class="slider-val" id="slider-time-val">45 sec</span>
+          </div>
+          <input type="range" min="15" max="180" value="45" class="craft-range-slider" id="slider-time">
+        </div>
+
+        <!-- Slider 3: Aroma Intensity / Steam -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <span>Steam & Vapor Density</span>
+            <span class="slider-val" id="slider-steam-val">85%</span>
+          </div>
+          <input type="range" min="20" max="100" value="85" class="craft-range-slider" id="slider-steam">
+        </div>
+
+        <!-- Blend Selection Radio Pills -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <span>Artisan Origin Blend</span>
+          </div>
+          <div class="flavor-tags" id="blend-pills">
+            <button class="flavor-tag active" data-blend="matcha" data-color="0x6a8e45">Ceremonial Uji Matcha</button>
+            <button class="flavor-tag" data-blend="oolong" data-color="0xb28938">Roasted Iron Goddess Oolong</button>
+            <button class="flavor-tag" data-blend="jasmine" data-color="0xccd59b">Silver Needle Jasmine</button>
+            <button class="flavor-tag" data-blend="earlgrey" data-color="0x7f4f24">Royal Bergamot Earl Grey</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-Time Digital Tasting Card -->
+      <div class="tasting-card-display glass-panel">
+        <span class="tasting-card-badge">Bespoke Tasting Profile</span>
+        <h3 class="tasting-card-title" id="tasting-card-name">Spring Mist Uji Gyokuro</h3>
+        <p class="card-desc" id="tasting-card-desc">
+          Shade-grown under bamboo straw mats for 21 days to preserve delicate L-theanine amino acids and intense sweet umami notes.
+        </p>
+
+        <div class="flavor-tags">
+          <span class="flavor-tag">Marine Umami</span>
+          <span class="flavor-tag">Fresh Sweet Grass</span>
+          <span class="flavor-tag">Silky Body</span>
+        </div>
+
+        <div class="radar-bars">
+          <div class="radar-item">
+            <div class="radar-item-head">
+              <span>Umami & Sweetness</span>
+              <span id="meter-sweet">92%</span>
+            </div>
+            <div class="radar-bar-track">
+              <div class="radar-bar-fill" id="bar-sweet" style="width: 92%;"></div>
+            </div>
+          </div>
+
+          <div class="radar-item">
+            <div class="radar-item-head">
+              <span>Aroma Clarity</span>
+              <span id="meter-aroma">88%</span>
+            </div>
+            <div class="radar-bar-track">
+              <div class="radar-bar-fill" id="bar-aroma" style="width: 88%;"></div>
+            </div>
+          </div>
+
+          <div class="radar-item">
+            <div class="radar-item-head">
+              <span>Body & Texture</span>
+              <span id="meter-body">75%</span>
+            </div>
+            <div class="radar-bar-track">
+              <div class="radar-bar-fill" id="bar-body" style="width: 75%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="add-custom-brew-btn" style="margin-top:14px;">
+          <span>Add Custom Recipe to Tray</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SECTION 2: CURATED SENSORY TASTING MENU
+       ======================================================================== -->
+  <section class="section" id="menu">
+    <div class="section-head">
+      <span class="section-tag">Seasonal Offerings</span>
+      <h2 class="section-title">The Sensory Tasting Collection</h2>
+      <p class="section-desc">
+        Explore our curated single-origin teas, slow-pour artisan coffees, and steaming hearth rice bowls. Hover over cards for 3D perspective response.
+      </p>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="menu-filter-bar">
+      <button class="menu-filter-btn active" data-filter="all">All Specialties</button>
+      <button class="menu-filter-btn" data-filter="tea">Ceremonial Teas</button>
+      <button class="menu-filter-btn" data-filter="coffee">Specialty Coffees</button>
+      <button class="menu-filter-btn" data-filter="rice">Hearth Rice Bowls</button>
+    </div>
+
+    <!-- 3D Tilt Cards Grid -->
+    <div class="menu-cards-grid" id="menu-grid">
+      <!-- Card 1: Tea -->
+      <div class="tilt-card" data-category="tea" data-name="Kyoto Ceremonial Matcha" data-price="₹240">
+        <div class="card-glare"></div>
+        <div>
+          <div class="card-top">
+            <div class="card-icon">🍵</div>
+            <span class="card-price">₹240</span>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:6px;">
+            <span class="card-category">Ceremonial Tea</span>
+            <span class="animated-badge">🌟 Artisanal</span>
+          </div>
+          <h3 class="card-name">Kyoto Single-Estate Matcha</h3>
+          <p class="card-desc">Stone-ground first harvest leaves whisked to a velvety emerald froth with vibrant jade aroma and delicate vegetal sweetness.</p>
+          <div class="card-notes">
+            <span class="note-pill">Uji, Japan</span>
+            <span class="note-pill">Stone Ground</span>
+            <span class="note-pill">L-Theanine Rich</span>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <button class="btn-add-flight">
+            <i data-lucide="plus" style="width:14px;height:14px;"></i>
+            <span>Add to Flight</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 2: Tea -->
+      <div class="tilt-card" data-category="tea" data-name="Iron Goddess Charcoal Oolong" data-price="₹210">
+        <div class="card-glare"></div>
+        <div>
+          <div class="card-top">
+            <div class="card-icon">🍃</div>
+            <span class="card-price">₹210</span>
+          </div>
+          <span class="card-category">Ceremonial Tea</span>
+          <h3 class="card-name">Tie Guan Yin Charcoal Oolong</h3>
+          <p class="card-desc">Traditional slow charcoal-baked leaves producing deep notes of roasted chestnut, orchid flowers, and prolonged honey finish.</p>
+          <div class="card-notes">
+            <span class="note-pill">High Mountain</span>
+            <span class="note-pill">12-hr Charcoal Roast</span>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <button class="btn-add-flight">
+            <i data-lucide="plus" style="width:14px;height:14px;"></i>
+            <span>Add to Flight</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 3: Coffee -->
+      <div class="tilt-card" data-category="coffee" data-name="Ethiopia Yirgacheffe Geisha" data-price="₹280">
+        <div class="card-glare"></div>
+        <div>
+          <div class="card-top">
+            <div class="card-icon">☕</div>
+            <span class="card-price">₹280</span>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:6px;">
+            <span class="card-category">Specialty Coffee</span>
+            <span class="animated-badge">✨ Micro-Lot</span>
+          </div>
+          <h3 class="card-name">Ethiopia Yirgacheffe Geisha</h3>
+          <p class="card-desc">Anaerobic natural process revealing bursting notes of bergamot, candied jasmine, white peach, and sparkling citrus acidity.</p>
+          <div class="card-notes">
+            <span class="note-pill">2,100m Altitude</span>
+            <span class="note-pill">V60 Pour-Over</span>
+            <span class="note-pill">Light Roast</span>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <button class="btn-add-flight">
+            <i data-lucide="plus" style="width:14px;height:14px;"></i>
+            <span>Add to Flight</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 4: Coffee -->
+      <div class="tilt-card" data-category="coffee" data-name="Kyoto 24-Hour Slow Drip" data-price="₹260">
+        <div class="card-glare"></div>
+        <div>
+          <div class="card-top">
+            <div class="card-icon">🧪</div>
+            <span class="card-price">₹260</span>
+          </div>
+          <span class="card-category">Specialty Coffee</span>
+          <h3 class="card-name">Kyoto 24-Hour Slow Drip</h3>
+          <p class="card-desc">Single-drop water tower extraction producing whiskey-like complexity, dark chocolate liquorice, and pure zero-bitterness clarity.</p>
+          <div class="card-notes">
+            <span class="note-pill">Dutch Slow Tower</span>
+            <span class="note-pill">1 Drop / 3 Sec</span>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <button class="btn-add-flight">
+            <i data-lucide="plus" style="width:14px;height:14px;"></i>
+            <span>Add to Flight</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 5: Rice -->
+      <div class="tilt-card" data-category="rice" data-name="Koshihikari Pearl Rice & Truffle Donburi" data-price="₹360">
+        <div class="card-glare"></div>
+        <div>
+          <div class="card-top">
+            <div class="card-icon">🍚</div>
+            <span class="card-price">₹360</span>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:6px;">
+            <span class="card-category">Hearth Rice Bowl</span>
+            <span class="animated-badge">🔥 Chef Special</span>
+          </div>
+          <h3 class="card-name">Niigata Koshihikari Pearl Donburi</h3>
+          <p class="card-desc">Freshly harvested Koshihikari rice simmered in cedar claypot, infused with black truffle reduction, toasted sesame, and crispy nori ribbons.</p>
+          <div class="card-notes">
+            <span class="note-pill">Mineral Pearl Rice</span>
+            <span class="note-pill">Served with Steaming Tea</span>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <button class="btn-add-flight">
+            <i data-lucide="plus" style="width:14px;height:14px;"></i>
+            <span>Add to Flight</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 6: Rice -->
+      <div class="tilt-card" data-category="rice" data-name="Ochazuke Ceremonial Tea & Rice Feast" data-price="₹320">
+        <div class="card-glare"></div>
+        <div>
+          <div class="card-top">
+            <div class="card-icon">🍲</div>
+            <span class="card-price">₹320</span>
+          </div>
+          <span class="card-category">Hearth Rice Bowl</span>
+          <h3 class="card-name">Ceremonial Ochazuke Feast</h3>
+          <p class="card-desc">Hot steamed rice topped with wild salmon flakes and scallions, bathed at your table in steaming hot Genmaicha brown rice tea broth.</p>
+          <div class="card-notes">
+            <span class="note-pill">Table Pour Ceremony</span>
+            <span class="note-pill">Roasted Rice Broth</span>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <button class="btn-add-flight">
+            <i data-lucide="plus" style="width:14px;height:14px;"></i>
+            <span>Add to Flight</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 7: NEW COFFEE (South Indian Filter Coffee) -->
+      <div class="tilt-card" data-category="coffee" data-name="South Indian Degree Filter Coffee" data-price="₹160">
+        <div class="card-glare"></div>
+        <div>
+          <div class="card-top">
+            <div class="card-icon">☕</div>
+            <span class="card-price">₹160</span>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:6px;">
+            <span class="card-category">Heritage Coffee</span>
+            <span class="animated-badge">🔥 Bestseller</span>
+          </div>
+          <h3 class="card-name">South Indian Degree Filter Coffee</h3>
+          <p class="card-desc">Traditional chicory-infused decoction poured meter-high in brass davarah-tumbler. Crowned with thick caramel foam and rich roasted aroma.</p>
+          <div class="card-notes">
+            <span class="note-pill">Brass Davarah Set</span>
+            <span class="note-pill">85:15 Plantation A</span>
+            <span class="note-pill">Frothy Velvet</span>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <button class="btn-add-flight">
+            <i data-lucide="plus" style="width:14px;height:14px;"></i>
+            <span>Add to Flight</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 8: NEW TEA (Kashmiri Kahwa) -->
+      <div class="tilt-card" data-category="tea" data-name="Royal Kashmiri Kahwa & Saffron" data-price="₹220">
+        <div class="card-glare"></div>
+        <div>
+          <div class="card-top">
+            <div class="card-icon">🫖</div>
+            <span class="card-price">₹220</span>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:6px;">
+            <span class="card-category">Ceremonial Tea</span>
+            <span class="animated-badge">✨ Royal Reserve</span>
+          </div>
+          <h3 class="card-name">Royal Kashmiri Saffron Kahwa</h3>
+          <p class="card-desc">Simmered in copper samovar with Kashmiri green tea, hand-crushed roasted almonds, whole green cardamom, and strands of pure Mongra saffron.</p>
+          <div class="card-notes">
+            <span class="note-pill">Mongra Saffron</span>
+            <span class="note-pill">Crushed Almonds</span>
+            <span class="note-pill">Copper Samovar</span>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <button class="btn-add-flight">
+            <i data-lucide="plus" style="width:14px;height:14px;"></i>
+            <span>Add to Flight</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 9: NEW TEA (Masala Chai Reserve) -->
+      <div class="tilt-card" data-category="tea" data-name="Cutting Masala Chai Reserve" data-price="₹140">
+        <div class="card-glare"></div>
+        <div>
+          <div class="card-top">
+            <div class="card-icon">🍵</div>
+            <span class="card-price">₹140</span>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:6px;">
+            <span class="card-category">Heritage Tea</span>
+            <span class="animated-badge">⚡ Warm Comfort</span>
+          </div>
+          <h3 class="card-name">Cutting Masala Chai Reserve</h3>
+          <p class="card-desc">Bold Assam CTC slow-steeped with pestle-crushed mountain ginger, Ceylon cinnamon, black peppercorns, and fresh lemongrass stalk.</p>
+          <div class="card-notes">
+            <span class="note-pill">Single-Estate Assam</span>
+            <span class="note-pill">Crushed Ginger</span>
+            <span class="note-pill">Clay Kulhad Serve</span>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <button class="btn-add-flight">
+            <i data-lucide="plus" style="width:14px;height:14px;"></i>
+            <span>Add to Flight</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 10: NEW COFFEE (Mysore Nugget) -->
+      <div class="tilt-card" data-category="coffee" data-name="Mysore Nugget Extra Bold Espresso" data-price="₹220">
+        <div class="card-glare"></div>
+        <div>
+          <div class="card-top">
+            <div class="card-icon">☕</div>
+            <span class="card-price">₹220</span>
+          </div>
+          <span class="card-category">Specialty Coffee</span>
+          <h3 class="card-name">Mysore Nugget Extra Bold</h3>
+          <p class="card-desc">Supreme AAA-grade shade-grown Arabica from the misty Baba Budangiri hills. Intense dark cacao body with nutmeg and cedarwood finish.</p>
+          <div class="card-notes">
+            <span class="note-pill">Baba Budangiri</span>
+            <span class="note-pill">AAA Washed</span>
+            <span class="note-pill">Tiger Crema</span>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <button class="btn-add-flight">
+            <i data-lucide="plus" style="width:14px;height:14px;"></i>
+            <span>Add to Flight</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 11: NEW RICE (A2 Ghee Podi Rice) -->
+      <div class="tilt-card" data-category="rice" data-name="A2 Ghee Podi Steamed Basmati Bowl" data-price="₹280">
+        <div class="card-glare"></div>
+        <div>
+          <div class="card-top">
+            <div class="card-icon">🍚</div>
+            <span class="card-price">₹280</span>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:6px;">
+            <span class="card-category">Hearth Rice Bowl</span>
+            <span class="animated-badge">🔥 Master Signature</span>
+          </div>
+          <h3 class="card-name">A2 Ghee Podi Steamed Basmati</h3>
+          <p class="card-desc">Steaming hot extra-long aged Basmati rice drizzled tableside with golden bilona A2 cow ghee, roasted lentil gun powder podi, and crisp curry leaves.</p>
+          <div class="card-notes">
+            <span class="note-pill">Aged Taraori Basmati</span>
+            <span class="note-pill">Pure Bilona Ghee</span>
+            <span class="note-pill">Served with Filter Tea</span>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <button class="btn-add-flight">
+            <i data-lucide="plus" style="width:14px;height:14px;"></i>
+            <span>Add to Flight</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 12: NEW RICE (Paneer Makhani Donburi) -->
+      <div class="tilt-card" data-category="rice" data-name="Paneer Makhani Hearth Donburi" data-price="₹340">
+        <div class="card-glare"></div>
+        <div>
+          <div class="card-top">
+            <div class="card-icon">🍲</div>
+            <span class="card-price">₹340</span>
+          </div>
+          <span class="card-category">Hearth Rice Bowl</span>
+          <h3 class="card-name">Tandoor Paneer Makhani Donburi</h3>
+          <p class="card-desc">Charred cottage cheese cubes in silky sun-ripened tomato cashew gravy, resting over piping hot fluffy rice with roasted cumin and fresh coriander.</p>
+          <div class="card-notes">
+            <span class="note-pill">Claypot Simmered</span>
+            <span class="note-pill">Velvet Makhani</span>
+            <span class="note-pill">Clay Kulhad Tea</span>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <button class="btn-add-flight">
+            <i data-lucide="plus" style="width:14px;height:14px;"></i>
+            <span>Add to Flight</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 13: NEW COFFEE (Cardamom Rose Cold Brew) -->
+      <div class="tilt-card" data-category="coffee" data-name="Cardamom Rose Cold Brew Tonic" data-price="₹250">
+        <div class="card-glare"></div>
+        <div>
+          <div class="card-top">
+            <div class="card-icon">🧋</div>
+            <span class="card-price">₹250</span>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:6px;">
+            <span class="card-category">Specialty Coffee</span>
+            <span class="animated-badge">❄️ Chilled Botanical</span>
+          </div>
+          <h3 class="card-name">Cardamom Rose Cold Brew</h3>
+          <p class="card-desc">Coorg estate coffee steeped cold for 20 hours, paired with Damascus rose petal cordial, crushed green cardamom, and elderflower tonic.</p>
+          <div class="card-notes">
+            <span class="note-pill">20-Hr Steep</span>
+            <span class="note-pill">Damascus Rose</span>
+            <span class="note-pill">Sparkling Tonic</span>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <button class="btn-add-flight">
+            <i data-lucide="plus" style="width:14px;height:14px;"></i>
+            <span>Add to Flight</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 14: NEW TEA (Turmeric Cinnamon Latte) -->
+      <div class="tilt-card" data-category="tea" data-name="Golden Turmeric Cinnamon Latte" data-price="₹230">
+        <div class="card-glare"></div>
+        <div>
+          <div class="card-top">
+            <div class="card-icon">🍯</div>
+            <span class="card-price">₹230</span>
+          </div>
+          <span class="card-category">Wellness Brew</span>
+          <h3 class="card-name">Lakadong Golden Turmeric Latte</h3>
+          <p class="card-desc">High-curcumin Meghalaya Lakadong turmeric whisked with steamed organic oat milk, Ceylon cinnamon quills, and wild Himalayan forest honey.</p>
+          <div class="card-notes">
+            <span class="note-pill">7.5% Curcumin</span>
+            <span class="note-pill">Oat Milk Foam</span>
+            <span class="note-pill">Cinnamon Dust</span>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <button class="btn-add-flight">
+            <i data-lucide="plus" style="width:14px;height:14px;"></i>
+            <span>Add to Flight</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SECTION 3: THE ALCHEMY OF STEAM & FIRE
+       ======================================================================== -->
+  <section class="section" id="philosophy">
+    <div class="section-head">
+      <span class="section-tag">Craftsmanship Manifesto</span>
+      <h2 class="section-title">The Three Pillars of Alchemy</h2>
+      <p class="section-desc">
+        In our atelier, water, heat, and grain converse in an ancient rhythm of precision and patience.
+      </p>
+    </div>
+
+    <div class="alchemy-features-grid">
+      <div class="feature-box glass-panel">
+        <span class="feature-num">01</span>
+        <h3 class="feature-title">The Hydrodynamics of the Drop</h3>
+        <p class="feature-text">
+          A single tea droplet encapsulates temperature, viscosity, and kinetic impact. At 88°C, the surface tension creates concentric wave interference that releases volatile aromatic esters into the surrounding air.
+        </p>
+      </div>
+
+      <div class="feature-box glass-panel">
+        <span class="feature-num">02</span>
+        <h3 class="feature-title">The Golden Emulsion of Crema</h3>
+        <p class="feature-text">
+          Nine bars of pressure force heated water through tightly packed roasted grounds, suspending trapped carbon dioxide in microscopic lipid bubbles to build our signature thick, tiger-striped crema.
+        </p>
+      </div>
+
+      <div class="feature-box glass-panel">
+        <span class="feature-num">03</span>
+        <h3 class="feature-title">The Steamed Pearl Grain</h3>
+        <p class="feature-text">
+          Cooked inside porous Iga claypots, each grain of Koshihikari rice absorbs moisture evenly, puffing into glossy pearls that exhale fragrant, comforting steam the instant the ceremonial lid is unveiled.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SECTION 4: MASTER ARTISAN ALAGAR & DIRECT CONTACT
+       ======================================================================== -->
+  <section class="master-spotlight-section" id="alagar">
+    <div class="master-card glass-panel">
+      <div class="master-visual-col">
+        <div class="master-portrait-frame">
+          <div class="master-monogram-inner">
+            <span class="master-monogram-letter">A</span>
+            <span class="master-seal-label">Atelier Master</span>
+          </div>
+        </div>
+        <div class="master-badge">
+          <i data-lucide="award" style="width:14px;height:14px;"></i>
+          <span>Founder & Master Sommelier</span>
+        </div>
+        <div style="font-size:0.85rem;color:var(--text-muted);">Crafting Sensory Experiences Since 2018</div>
+      </div>
+
+      <div>
+        <div class="section-tag" style="text-align:left;margin-bottom:8px;">Meet the Craftsman</div>
+        <h2 class="master-name">Master Alagar</h2>
+        <div class="master-title-role">Founder • Master Tea Sommelier & Culinary Artisan</div>
+
+        <p class="master-bio-quote">
+          "True craft lives in the transition between elements — the exact moment steam rises from boiling spring water, the single drop that ripples the bowl, and the silent fragrance of hot rice. We do not simply serve food and beverage; we curate moments of pause and mindfulness."
+        </p>
+
+        <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:24px;line-height:1.6;">
+          Have questions about our single-origin tea releases, customized corporate tasting flights, or private chef hearth ceremonies? Master Alagar is personally available for direct inquiries and VIP bookings.
+        </p>
+
+        <!-- Direct Contact Action Buttons -->
+        <div class="master-contact-card-box">
+          <a href="tel:9600470133" class="btn-contact-call" title="Direct Phone Call">
+            <i data-lucide="phone-call" style="width:18px;height:18px;"></i>
+            <span>Call +91 9600470133</span>
+          </a>
+
+          <a href="https://wa.me/919600470133" target="_blank" rel="noopener noreferrer" class="btn-contact-wa" title="Chat on WhatsApp">
+            <i data-lucide="message-circle" style="width:18px;height:18px;"></i>
+            <span>WhatsApp Alagar</span>
+          </a>
+
+          <button class="btn-glass" id="master-book-btn">
+            <i data-lucide="calendar" style="width:16px;height:16px;"></i>
+            <span>Book Private Session</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SLIDING TASTING FLIGHT DRAWER
+       ======================================================================== -->
+  <div class="cart-drawer-backdrop" id="cart-backdrop"></div>
+  <aside class="cart-drawer" id="cart-drawer">
+    <div class="cart-header">
+      <h3 class="cart-title">Your Tasting Flight</h3>
+      <button class="cart-close-btn" id="cart-close-btn" aria-label="Close Tray">&times;</button>
+    </div>
+
+    <div class="cart-items-list" id="cart-items-list">
+      <div style="text-align:center;color:var(--text-muted);padding-top:40px;">
+        Your tasting flight is currently empty.<br>Add teas, coffees, or rice bowls from the menu!
+      </div>
+    </div>
+
+    <div class="cart-footer">
+      <div class="cart-subtotal-row">
+        <span>Subtotal</span>
+        <span id="cart-subtotal">$0.00</span>
+      </div>
+      <button class="btn-primary" id="checkout-order-btn">
+        <span>Proceed to Table Reservation</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       TABLE RESERVATION MODAL
+       ======================================================================== -->
+  <div class="reservation-modal-backdrop" id="reservation-modal">
+    <div class="reservation-card glass-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h3 style="font-family:var(--font-display);font-size:1.4rem;">Atelier Table Reservation</h3>
+        <button class="cart-close-btn" id="reservation-close-btn">&times;</button>
+      </div>
+
+      <div style="padding:10px 16px;border-radius:var(--radius-sm);background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.35);font-size:0.88rem;color:#f4d06f;display:flex;align-items:center;gap:10px;">
+        <i data-lucide="phone-call" style="width:16px;height:16px;"></i>
+        <span>VIP Concierge: Call Master Alagar at <a href="tel:9600470133" style="font-weight:800;text-decoration:underline;color:#ffffff;">+91 9600470133</a></span>
+      </div>
+
+      <p style="font-size:0.9rem;color:var(--text-secondary);">
+        Reserve your private sensory counter experience. Our master tea sommelier Alagar will prepare each course live before your eyes.
+      </p>
+
+      <form id="reservation-form" style="display:flex;flex-direction:column;gap:14px;">
+        <div class="form-group">
+          <label class="form-label">Guest Full Name</label>
+          <input type="text" class="form-input" placeholder="e.g. Kenzo Shimizu" required>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label class="form-label">Date</label>
+            <input type="date" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Time Slot</label>
+            <select class="form-select">
+              <option>12:00 PM — Sunlight Tasting</option>
+              <option>03:30 PM — Afternoon Tea Ritual</option>
+              <option selected>07:00 PM — Evening Hearth Feast</option>
+              <option>09:30 PM — Midnight Roast & Drip</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Special Sensory Preference</label>
+          <input type="text" class="form-input" placeholder="e.g. Low caffeine, extra steamed rice">
+        </div>
+
+        <button type="submit" class="btn-primary" style="margin-top:10px;">
+          <span>Confirm Atelier Reservation</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       CORNER CARTOON TEA MAKER MASCOT (CHIBI TEA ARTISAN)
+       ======================================================================== -->
+  <div class="corner-cartoon-mascot" id="cartoon-mascot">
+    <!-- Speech Bubble with Interactive Actions -->
+    <div class="mascot-bubble glass-panel" id="mascot-bubble">
+      <div class="bubble-header">
+        <span class="bubble-tag">🍵 Chibi Chai Master</span>
+        <button class="bubble-close-btn" id="mascot-minimize-btn" title="Minimize">&times;</button>
+      </div>
+      <p class="bubble-msg" id="mascot-msg">Vanakkam! Hot tea ready pannava? Click to brew with me! ✨</p>
+      <div class="bubble-actions">
+        <button class="btn-mascot-brew" id="mascot-make-tea-btn">
+          <i data-lucide="coffee" style="width:13px;height:13px;"></i>
+          <span>Make Tea Now!</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Cartoon Mascot Figure (Chibi Barista Character) -->
+    <div class="mascot-figure-wrap" id="mascot-figure" title="Click to brew tea with Chibi Master!">
+      <svg class="mascot-svg" viewBox="0 0 160 190" width="130" height="155">
+        <!-- Floating Steam Clouds -->
+        <g class="mascot-steam-group" id="mascot-steam">
+          <circle cx="55" cy="40" r="6" fill="rgba(255,255,255,0.7)" />
+          <circle cx="50" cy="28" r="8" fill="rgba(255,255,255,0.5)" />
+          <circle cx="58" cy="18" r="5" fill="rgba(255,255,255,0.3)" />
+          <path d="M 46 45 Q 52 35 48 24 Q 44 14 52 6" stroke="rgba(255,255,255,0.6)" stroke-width="3" fill="none" stroke-linecap="round" />
+        </g>
+
+        <!-- Body & Apron -->
+        <ellipse cx="80" cy="135" rx="36" ry="32" fill="#2d3748" />
+        <path d="M 60 120 L 100 120 L 96 162 L 64 162 Z" fill="#7ca982" />
+        <!-- Gold Tea Leaf emblem on Apron -->
+        <path d="M 80 134 Q 86 126 80 120 Q 74 126 80 134 Z" fill="#d4af37" />
+
+        <!-- Legs/Feet -->
+        <ellipse cx="68" cy="168" rx="10" ry="7" fill="#1a202c" />
+        <ellipse cx="92" cy="168" rx="10" ry="7" fill="#1a202c" />
+
+        <!-- Head -->
+        <circle cx="80" cy="78" r="34" fill="#ffd1a9" />
+        <!-- Rosy Blush Cheeks -->
+        <ellipse cx="58" cy="86" rx="6" ry="4" fill="#ff8ba7" opacity="0.65" />
+        <ellipse cx="102" cy="86" rx="6" ry="4" fill="#ff8ba7" opacity="0.65" />
+
+        <!-- Eyes (Blinking Animation) -->
+        <g class="mascot-eyes" id="mascot-eyes">
+          <ellipse class="mascot-eye-left" cx="66" cy="76" rx="4.5" ry="6" fill="#1a202c" />
+          <circle cx="68" cy="74" r="1.8" fill="#ffffff" />
+          <ellipse class="mascot-eye-right" cx="94" cy="76" rx="4.5" ry="6" fill="#1a202c" />
+          <circle cx="96" cy="74" r="1.8" fill="#ffffff" />
+        </g>
+
+        <!-- Cute Smile -->
+        <path class="mascot-mouth" id="mascot-mouth" d="M 74 88 Q 80 94 86 88" stroke="#1a202c" stroke-width="2.5" fill="none" stroke-linecap="round" />
+
+        <!-- Master Artisan Headband with Gold Emblem -->
+        <path d="M 52 56 Q 80 44 108 56 Q 104 38 80 34 Q 56 38 52 56 Z" fill="#ffffff" />
+        <rect x="52" y="52" width="56" height="8" rx="4" fill="#d4af37" />
+
+        <!-- Left Arm holding Teapot (Tilts and Pours on brew!) -->
+        <g class="mascot-teapot-arm" id="mascot-arm-left">
+          <path d="M 52 120 Q 34 110 32 94" stroke="#ffd1a9" stroke-width="9" stroke-linecap="round" fill="none" />
+          <!-- Brass Teapot / Chai Kettle -->
+          <g class="mascot-kettle" id="mascot-kettle">
+            <ellipse cx="28" cy="86" rx="15" ry="12" fill="#d4af37" />
+            <path d="M 28 74 L 28 71" stroke="#997b1a" stroke-width="3" />
+            <circle cx="28" cy="70" r="3" fill="#ffd166" />
+            <path d="M 38 84 Q 48 76 52 82" stroke="#d4af37" stroke-width="4" fill="none" stroke-linecap="round" />
+            <path d="M 16 84 Q 10 72 20 68 Q 28 68 34 72" stroke="#684725" stroke-width="3" fill="none" stroke-linecap="round" />
+          </g>
+        </g>
+
+        <!-- Animated Tea Liquid Stream (Appears on pouring!) -->
+        <path class="mascot-pour-stream" id="mascot-tea-stream" d="M 52 83 Q 54 102 56 122" stroke="#b28938" stroke-width="3.5" stroke-linecap="round" fill="none" opacity="0" />
+
+        <!-- Right Arm holding Teacup / Davarah -->
+        <g class="mascot-cup-arm" id="mascot-arm-right">
+          <path d="M 108 120 Q 124 118 120 102" stroke="#ffd1a9" stroke-width="9" stroke-linecap="round" fill="none" />
+          <g class="mascot-cup" id="mascot-cup">
+            <ellipse cx="56" cy="126" rx="9" ry="6" fill="#ded5c6" />
+            <ellipse cx="56" cy="124" rx="7" ry="4" fill="#6a8e45" />
+            <circle cx="56" cy="116" r="3" fill="rgba(255,255,255,0.7)" class="cup-steam" />
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Mini Toggle Pill (when mascot is minimized) -->
+    <button class="mascot-mini-pill" id="mascot-maximize-btn" title="Open Chai Mascot">
+      <span>🍵 Chibi Tea Master</span>
+    </button>
+  </div>
+
+  <!-- ========================================================================
+       FLOATING QUICK CONTACT WIDGET (CALL & WHATSAPP)
+       ======================================================================== -->
+  <aside class="floating-quick-contact">
+    <a href="tel:9600470133" class="contact-pill-link" title="Call Master Alagar (+91 9600470133)">
+      <div class="pulse-icon-ring">
+        <i data-lucide="phone-call" style="width:16px;height:16px;"></i>
+      </div>
+      <div class="contact-pill-text">
+        <span class="contact-pill-name">Founder Alagar</span>
+        <span class="contact-pill-num">9600470133</span>
+      </div>
+    </a>
+
+    <a href="https://wa.me/919600470133" target="_blank" rel="noopener noreferrer" class="contact-pill-link" style="background:#13281c;border-color:#25d366;" title="Chat with Alagar on WhatsApp">
+      <div class="pulse-icon-ring" style="background:#25d366;color:#ffffff;">
+        <i data-lucide="message-circle" style="width:16px;height:16px;"></i>
+      </div>
+      <div class="contact-pill-text">
+        <span class="contact-pill-name" style="color:#25d366;">WhatsApp</span>
+        <span class="contact-pill-num">Chat Live</span>
+      </div>
+    </a>
+  </aside>
+
+  <!-- ========================================================================
+       FOOTER
+       ======================================================================== -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div>
+        <div class="brand-logo" style="margin-bottom:12px;">
+          <div class="brand-emblem">A</div>
+          <span class="brand-name">Alagar • Zenith</span>
+        </div>
+        <p class="footer-brand-desc">
+          Founded by Master Alagar. An experiential culinary sanctuary exploring the sacred geometry of tea droplets, coffee extraction, and hot steamed rice.
+        </p>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Master Contact</h4>
+        <ul class="footer-links">
+          <li class="footer-link"><strong>Artisan:</strong> Master Alagar</li>
+          <li class="footer-link"><strong>Phone:</strong> <a href="tel:9600470133" style="color:#ffd166;">+91 9600470133</a></li>
+          <li class="footer-link"><strong>WhatsApp:</strong> <a href="https://wa.me/919600470133" target="_blank" style="color:#25d366;">Chat on WhatsApp</a></li>
+          <li class="footer-link">Mon – Sun: 8:00 AM – 11:30 PM</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Experiences</h4>
+        <ul class="footer-links">
+          <li><a href="#stage" class="footer-link">3D Liquid Physics</a></li>
+          <li><a href="#craft-lab" class="footer-link">Brew Customizer</a></li>
+          <li><a href="#menu" class="footer-link">Tasting Flight</a></li>
+          <li><a href="#alagar" class="footer-link">Master Alagar Studio</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Manifesto</h4>
+        <p style="font-size:0.88rem;color:var(--text-secondary);margin-bottom:12px;">
+          Subscribe to our seasonal micro-lot tea and coffee release journal.
+        </p>
+        <div style="display:flex;gap:6px;">
+          <input type="email" placeholder="Your email address" class="form-input" style="padding:8px 12px;font-size:0.85rem;flex:1;">
+          <button class="btn-primary" style="padding:8px 16px;font-size:0.85rem;">Join</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 ALAGAR • ZENITH Atelier & Hearth. All Rights Reserved. Master Alagar: +91 9600470133.</span>
+      <span>Modern 3D Interactive Web Experience</span>
+    </div>
+  </footer>
+
+  <!-- Application Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/three-scene.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Initialize Lucide Icons
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  </script>
+</body>
+</html>
